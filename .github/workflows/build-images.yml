@@ -13,8 +13,8 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - context: backend
-            file: backend/Dockerfile
+          - context: .
+            file: Dockerfile.web
             image: obico-web
           - context: ml_api
             file: ml_api/Dockerfile
