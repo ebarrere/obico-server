@@ -1,0 +1,15 @@
+# Root-context build so the prebuilt frontend assets (STATICFILES_DIRS ->
+# /frontend/static and /frontend/builds) are baked into the image. Upstream's
+# backend/Dockerfile relies on a runtime bind-mount of ./frontend, which we
+# can't do in k8s. Mirrors backend/Dockerfile otherwise.
+FROM thespaghettidetective/web:base-1.18
+
+WORKDIR /app
+EXPOSE 3334
+
+RUN pip install -U pip pipenv==2022.12.19
+
+COPY backend/ /app/
+COPY frontend/static /frontend/static
+COPY frontend/builds /frontend/builds
+RUN pip install -r requirements.txt
