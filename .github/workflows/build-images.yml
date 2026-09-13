@@ -16,8 +16,9 @@ jobs:
           - context: .
             file: Dockerfile.web
             image: obico-web
+          # CPU/ONNX-only ml_api (~0.5GB) instead of the 3.4GB GPU image.
           - context: ml_api
-            file: ml_api/Dockerfile
+            file: ml_api/Containerfile.cpu
             image: obico-ml-api
     steps:
       - uses: actions/checkout@v4
