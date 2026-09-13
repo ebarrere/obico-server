@@ -57,6 +57,15 @@ def detect(printer, pic, pic_id, raw_pic_url, ml_api_endpoint, params):
     prediction.normalized_p = calc_normalized_p(printer.detective_sensitivity, prediction, params)
     prediction.save()
 
+    # Concise per-frame decision log (INFO, always on) so the failure-detection
+    # process is watchable via `kubectl logs` during a print.
+    _max_conf = max((d[1] for d in detections), default=0.0)
+    LOGGER.info(
+        'AI detection: print=%s frame=%s detections=%d max_conf=%.2f current_p=%.4f normalized_p=%.2f',
+        getattr(printer.current_print, 'id', None), pic_id,
+        len(detections), _max_conf, prediction.current_p, prediction.normalized_p,
+    )
+
     if prediction.current_p > params['THRESHOLD_LOW'] * 0.2:
         cache.print_high_prediction_add(printer.current_print.id, prediction.current_p, pic_id)
 
